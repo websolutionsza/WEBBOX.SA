@@ -1,0 +1,9 @@
+# Cloudflare Pages _redirects
+# ---------------------------
+# Cloudflare Pages automatically serves /404.html with a 404 status for
+# any path that does not resolve to a static file. No additional rule is
+# required for the standard 404 behaviour. This file is intentionally
+# minimal so the default file-routing behaviour is preserved.
+#
+# If a future build step or framework is introduced, configure redirects
+# here. For the current static site, leave this file empty.
