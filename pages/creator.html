@@ -64,22 +64,10 @@
           </div>
         </div>
 
-        <div class="prose" style="max-width: 100%;">
-          <h2>About Tlhompo</h2>
-          <p>Tlhompo Meje is a web developer focused on building clean, accessible and visually distinctive web products. He is the creator of WEB BOX SA, a public gaming library and discovery platform, and operates under the WebSolutionsSA development brand.</p>
-          <p>The WEB BOX public website — interface, layout, visual identity and frontend code — is his original work. He is also connected to other web projects including WebDrop Pro and PWA Resizer, a free utility project. More details are summarised in the projects section below.</p>
-          <p>This page exists to make Tlhompo's connection to WEB BOX SA and WebSolutionsSA explicit and discoverable. It does not invent client testimonials, qualifications, achievements or work history. Only projects that he has genuinely built are listed.</p>
-
-          <h2>Projects</h2>
-          <p>The projects below are connected to Tlhompo Meje and WebSolutionsSA. Each entry will be linked to its real destination once supplied. The list will be updated as official URLs are confirmed.</p>
-        </div>
-
-        <div id="projects-grid" class="projects-grid" role="list" aria-label="Projects by Tlhompo Meje"></div>
-
-        <div class="section--tight" style="margin-top: var(--space-8);">
+        <div class="section--tight" style="margin-top: var(--space-7);">
           <div class="section-head">
             <p class="eyebrow">Connect</p>
-            <h2>Connect with Tlhompo</h2>
+            <h2>Connect with the Developer</h2>
             <p>Use the verified personal channels below. Each icon links directly to the destination.</p>
           </div>
           <div id="social-tlhompo" class="social-grid" role="list" aria-label="Tlhompo Meje official channels"></div>
@@ -102,47 +90,6 @@
   <script src="/js/main.js" defer></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // Render projects from WEBBOX.PROJECTS
-      const grid = document.getElementById("projects-grid");
-      const projects = (window.WEBBOX && window.WEBBOX.PROJECTS) || [];
-      grid.innerHTML = "";
-      projects.forEach(function (p) {
-        const card = document.createElement("div");
-        card.className = "project-card" + (p.url ? " has-link" : "");
-        card.setAttribute("role", "listitem");
-
-        const role = document.createElement("span");
-        role.className = "project-card__role";
-        role.textContent = p.role;
-        card.appendChild(role);
-
-        const name = document.createElement("h3");
-        name.className = "project-card__name";
-        if (p.url) {
-          const a = document.createElement("a");
-          a.href = p.url;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          a.textContent = p.name;
-          name.appendChild(a);
-        } else {
-          name.textContent = p.name;
-        }
-        card.appendChild(name);
-
-        const desc = document.createElement("p");
-        desc.className = "project-card__desc";
-        desc.textContent = p.description;
-        card.appendChild(desc);
-
-        const cta = document.createElement("p");
-        cta.className = "project-card__cta";
-        cta.textContent = p.url ? "Open external project →" : "Destination to be supplied";
-        card.appendChild(cta);
-
-        grid.appendChild(card);
-      });
-
       if (window.WEBBOX && window.WEBBOX.social) {
         window.WEBBOX.social.renderTlhompo("social-tlhompo");
       }
