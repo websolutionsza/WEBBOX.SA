@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Admin — WEB BOX SA</title>
+  <meta name="description" content="Private admin dashboard. Authorised access only.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://webbox-sa.pages.dev/pages/admin.html">
+
+  <meta name="theme-color" content="#0A0B0D">
+  <meta name="color-scheme" content="dark">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <header id="site-header" class="site-header"></header>
+  <aside id="mobile-menu" class="mobile-menu" data-state="closed" aria-hidden="true"></aside>
+
+  <main id="main">
+    <section class="section">
+      <div class="container">
+
+        <!-- Login view (shown when not authenticated) -->
+        <div id="admin-login" class="admin-login">
+          <div class="admin-login__card">
+            <p class="eyebrow">Admin</p>
+            <h1>Sign in</h1>
+            <p class="admin-login__intro">Authorised access only. Use your admin email and password.</p>
+
+            <form id="admin-login-form" class="admin-login__form" novalidate>
+              <div class="feedback-field">
+                <label for="admin-email">Email</label>
+                <input id="admin-email" name="email" type="email" required autocomplete="email">
+              </div>
+              <div class="feedback-field">
+                <label for="admin-password">Password</label>
+                <input id="admin-password" name="password" type="password" required autocomplete="current-password">
+              </div>
+              <button type="submit" id="admin-login-btn" class="btn btn--primary btn--lg">Sign in</button>
+            </form>
+            <p id="admin-login-status" class="feedback-status is-hidden" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <!-- Dashboard view (shown when authenticated) -->
+        <div id="admin-dashboard" class="admin-dashboard is-hidden">
+          <div class="admin-dashboard__head">
+            <div>
+              <p class="eyebrow">Admin dashboard</p>
+              <h1>Feedback inbox</h1>
+              <p class="admin-dashboard__sub">
+                Signed in as <span id="admin-user-email">…</span>.
+                <button type="button" id="admin-logout" class="admin-link-btn">Sign out</button>
+              </p>
+            </div>
+            <div class="admin-dashboard__stats">
+              <div class="admin-stat">
+                <span class="admin-stat__num" id="stat-new">0</span>
+                <span class="admin-stat__label">New</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat__num" id="stat-reviewed">0</span>
+                <span class="admin-stat__label">Reviewed</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat__num" id="stat-resolved">0</span>
+                <span class="admin-stat__label">Resolved</span>
+              </div>
+              <div class="admin-stat">
+                <span class="admin-stat__num" id="stat-total">0</span>
+                <span class="admin-stat__label">Total</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="admin-filter">
+              <label for="admin-filter-status">Filter</label>
+              <select id="admin-filter-status">
+                <option value="all">All</option>
+                <option value="new" selected>New</option>
+                <option value="reviewed">Reviewed</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </div>
+            <div class="admin-toolbar__right">
+              <button type="button" id="admin-indexnow" class="btn btn--ghost btn--sm" title="Ask participating search engines to re-crawl the public pages.">Notify search engines</button>
+              <button type="button" id="admin-refresh" class="btn btn--ghost btn--sm">Refresh</button>
+            </div>
+          </div>
+
+          <p id="admin-status" class="feedback-status is-hidden" role="status" aria-live="polite"></p>
+
+          <div id="admin-feedback-list" class="admin-feedback-list">
+            <!-- Feedback rows rendered by js/admin.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="/assets/config.js" defer></script>
+  <script src="/data/mock-games.js" defer></script>
+  <script src="/data/mock-characters.js" defer></script>
+  <script src="/js/utils.js" defer></script>
+  <script src="/js/api.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/intro.js" defer></script>
+  <script src="/js/disclaimer.js" defer></script>
+  <script src="/js/admin.js" defer></script>
+  <script src="/js/main.js" defer></script>
+</body>
+</html>

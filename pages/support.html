@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Support &amp; Feedback — WEB BOX SA</title>
+  <meta name="description" content="Get help with WEB BOX SA. Read quick guidance and submit anonymous feedback — broken games, technical issues, suggestions. No personal contact details required.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://webbox-sa.pages.dev/pages/support.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="WEB BOX SA">
+  <meta property="og:title" content="Support &amp; Feedback — WEB BOX SA">
+  <meta property="og:description" content="Get help with WEB BOX SA. Read quick guidance and submit anonymous feedback.">
+  <meta property="og:url" content="https://webbox-sa.pages.dev/pages/support.html">
+
+  <meta name="theme-color" content="#0A0B0D">
+  <meta name="color-scheme" content="dark">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <header id="site-header" class="site-header"></header>
+  <aside id="mobile-menu" class="mobile-menu" data-state="closed" aria-hidden="true"></aside>
+
+  <main id="main">
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Support</p>
+          <h1>How we can help with WEB BOX SA</h1>
+          <p>WEB BOX SA is a free, independent browser game library. Below are quick answers to common questions and a feedback form you can use to report problems or send suggestions.</p>
+        </div>
+
+        <div class="prose" style="max-width: 100%;">
+          <h2>Quick guidance</h2>
+          <ul>
+            <li><strong>Finding a game:</strong> Use the search field on the homepage and combine it with the category chips to filter the catalogue.</li>
+            <li><strong>Launching a game:</strong> Open any game in the library to view its detail page. The launch button is only enabled when a valid destination has been configured and the entry is marked as available.</li>
+            <li><strong>Availability badges:</strong> Games may show an <em>Unavailable</em>, <em>Pending review</em> or <em>Removed</em> badge. Removed entries do not appear in the library at all.</li>
+            <li><strong>Your profile:</strong> Visit the <a href="/pages/profile.html">Profile page</a> to pick a preset character, set a display name and add an optional local image. Your profile is stored on this device only.</li>
+            <li><strong>Reporting a problem:</strong> Use the feedback form below. Please include the game title or library reference (the slug shown on each detail page) and a short description of the issue.</li>
+          </ul>
+
+          <div class="notice">
+            <p><strong>No live chat.</strong> WEB BOX SA does not operate a real-time support channel. The feedback form below is the primary way to report issues. No name or contact details are required, but that also means we cannot reply to you individually.</p>
+          </div>
+        </div>
+
+        <div class="section--tight" id="feedback" style="margin-top: var(--space-7); scroll-margin-top: var(--header-h);">
+          <div class="section-head">
+            <p class="eyebrow">Feedback</p>
+            <h2>Submit feedback</h2>
+            <p>Use the form below to report a broken game, a technical issue, or to send a suggestion. No name, email or account is required.</p>
+          </div>
+
+          <form id="feedback-form" class="feedback-form" novalidate autocomplete="off">
+            <!-- Honeypot field — hidden from humans, bots fill it -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="hp-website">Website (leave empty)</label>
+              <input id="hp-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            <fieldset class="feedback-fieldset">
+              <legend>Category <span aria-hidden="true" style="color: var(--accent);">*</span></legend>
+              <div class="feedback-options">
+                <label class="feedback-option">
+                  <input type="radio" name="category" value="broken_game">
+                  <span class="feedback-option__label">Broken game</span>
+                </label>
+                <label class="feedback-option">
+                  <input type="radio" name="category" value="technical_issue">
+                  <span class="feedback-option__label">Technical issue</span>
+                </label>
+                <label class="feedback-option">
+                  <input type="radio" name="category" value="suggestion">
+                  <span class="feedback-option__label">Suggestion</span>
+                </label>
+                <label class="feedback-option">
+                  <input type="radio" name="category" value="general">
+                  <span class="feedback-option__label">General feedback</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="feedback-field">
+              <label for="feedback-game-slug">Game reference <span class="feedback-optional">(optional)</span></label>
+              <input id="feedback-game-slug" name="game_slug" type="text" maxlength="120" autocomplete="off">
+              <p class="feedback-help">If reporting a specific game, its reference is the short identifier shown on the game's detail page (e.g. <code>neon-drift</code>).</p>
+            </div>
+
+            <div class="feedback-field">
+              <label for="feedback-message">Your feedback <span aria-hidden="true" style="color: var(--accent);">*</span></label>
+              <textarea id="feedback-message" name="message" maxlength="2000" rows="6" autocomplete="off" placeholder="Tell us what happened, what you expected, and any other details that might help."></textarea>
+              <p class="feedback-char-count"><span id="feedback-char-count">0</span> / 2000 characters</p>
+            </div>
+
+            <div class="feedback-actions">
+              <button type="submit" id="feedback-submit" class="btn btn--primary btn--lg">Submit feedback</button>
+            </div>
+
+            <p class="feedback-privacy-note">
+              No name, email or account is required to submit feedback. Please note that
+              technical infrastructure may process request metadata (such as IP address)
+              as part of normal operation. Because no contact details are collected, we
+              cannot reply to feedback submitted through this form.
+            </p>
+          </form>
+
+          <p id="feedback-status" class="feedback-status is-hidden" role="status" aria-live="polite"></p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="/assets/config.js" defer></script>
+  <script src="/data/mock-games.js" defer></script>
+  <script src="/data/mock-characters.js" defer></script>
+  <script src="/js/utils.js" defer></script>
+  <script src="/js/api.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/intro.js" defer></script>
+  <script src="/js/disclaimer.js" defer></script>
+  <script src="/js/feedback.js" defer></script>
+  <script src="/js/main.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.WEBBOX && window.WEBBOX.feedback) {
+        window.WEBBOX.feedback.init();
+      }
+    });
+  </script>
+</body>
+</html>
