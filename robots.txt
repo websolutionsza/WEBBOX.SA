@@ -1,0 +1,11 @@
+# robots.txt — WEB BOX SA
+# Public website is fully crawlable.
+# The /pages/creator.html and /admin/ paths are excluded from indexing.
+
+User-agent: *
+Allow: /
+Disallow: /pages/creator.html
+Disallow: /pages/admin.html
+Disallow: /admin/
+
+Sitemap: https://webbox-sa.pages.dev/sitemap.xml
