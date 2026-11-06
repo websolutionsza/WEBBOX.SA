@@ -1,8 +1,0 @@
-# robots.txt — WEB BOX
-# Public website is fully crawlable.
-User-agent: *
-Allow: /
-
-# Block nothing — every public page is indexable.
-# Update the sitemap host below to match your production domain.
-Sitemap: https://webboxsa.pages.dev/sitemap.xml
