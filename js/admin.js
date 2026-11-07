@@ -436,7 +436,19 @@
           data.urlsPinged + " URLs submitted. Indexing is at each engine's discretion.",
           "success");
       } else {
-        const msg = (data && data.error) || "Ping failed (HTTP " + r.status + ").";
+        // Build a useful error message showing the ACTUAL IndexNow status
+        var msg;
+        if (data && data.error) {
+          msg = data.error;
+        } else if (data && typeof data.indexnowStatus === "number") {
+          msg = "IndexNow API returned HTTP " + data.indexnowStatus + ". " +
+                "Check that the INDEXNOW_KEY env var on Cloudflare exactly matches " +
+                "the key file at /" + (data.indexnowKey || "INDEXNOW_KEY") + ".txt";
+        } else if (data && typeof data.status === "number" && data.status !== 200) {
+          msg = "IndexNow API returned HTTP " + data.status + ".";
+        } else {
+          msg = "Ping failed (HTTP " + r.status + "). Check Cloudflare env var INDEXNOW_KEY.";
+        }
         utils.setStatus(status, msg, "error");
       }
     } catch (e) {
