@@ -94,15 +94,17 @@ export async function onRequestPost(context) {
     return new Response(
       JSON.stringify({
         ok: r.ok,
-        status: r.status,
+        indexnowStatus: r.status,
+        indexnowKey: env.INDEXNOW_KEY,
         urlsPinged: PUBLIC_URLS.length,
-        keyLocation: keyLocation
+        keyLocation: keyLocation,
+        error: r.ok ? null : "IndexNow returned HTTP " + r.status
       }),
       { status: 200, headers }
     );
   } catch (e) {
     return new Response(
-      JSON.stringify({ error: "IndexNow ping failed" }),
+      JSON.stringify({ error: "IndexNow ping failed: " + (e && e.message ? e.message : "unknown error") }),
       { status: 502, headers }
     );
   }
