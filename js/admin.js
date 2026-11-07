@@ -33,12 +33,94 @@
   const SK_REFRESH = "webbox_admin_refresh";
   const SK_EMAIL   = "webbox_admin_email";
 
+  // Rate limiting keys
+  const RL_KEY = "webbox_admin_rl";
+  const MAX_ATTEMPTS = 3;
+  const BLOCK_DURATION_MS = 60 * 1000; // 1 minute
+
+  // Session timeout
+  const SESSION_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes of inactivity
+  let lastActivity = Date.now();
+
   // Allowed admin emails — must match the RLS policy in phase5_feedback.sql.
   // This is a UX guard only (the real enforcement is RLS at the DB level).
   const ADMIN_EMAILS = ["findahustlesa@yahoo.com"];
 
   let supabase = null;     // { url, anonKey }
   let currentFilter = "new";
+  let blockCountdownTimer = null;
+
+  /* ---------- Rate limiting ---------- */
+  function getRateLimit() {
+    try {
+      const raw = sessionStorage.getItem(RL_KEY);
+      if (!raw) return { attempts: 0, blockedUntil: 0 };
+      const parsed = JSON.parse(raw);
+      return {
+        attempts: typeof parsed.attempts === "number" ? parsed.attempts : 0,
+        blockedUntil: typeof parsed.blockedUntil === "number" ? parsed.blockedUntil : 0
+      };
+    } catch (e) {
+      return { attempts: 0, blockedUntil: 0 };
+    }
+  }
+
+  function saveRateLimit(data) {
+    try {
+      sessionStorage.setItem(RL_KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  function getBlockRemaining() {
+    const rl = getRateLimit();
+    if (rl.blockedUntil && Date.now() < rl.blockedUntil) {
+      return rl.blockedUntil - Date.now();
+    }
+    // Block expired — reset
+    if (rl.blockedUntil && Date.now() >= rl.blockedUntil) {
+      saveRateLimit({ attempts: 0, blockedUntil: 0 });
+    }
+    return 0;
+  }
+
+  function recordFailedAttempt() {
+    const rl = getRateLimit();
+    rl.attempts++;
+    if (rl.attempts >= MAX_ATTEMPTS) {
+      rl.blockedUntil = Date.now() + BLOCK_DURATION_MS;
+      rl.attempts = 0;
+      // Security log
+      console.warn("[SECURITY] Admin login rate-limited: 3 failed attempts. Blocked for 60 seconds.");
+    } else {
+      console.warn("[SECURITY] Admin login failed. Attempt " + rl.attempts + " of " + MAX_ATTEMPTS + ".");
+    }
+    saveRateLimit(rl);
+  }
+
+  function resetRateLimit() {
+    saveRateLimit({ attempts: 0, blockedUntil: 0 });
+  }
+
+  /* ---------- Session timeout ---------- */
+  function resetActivityTimer() {
+    lastActivity = Date.now();
+  }
+
+  function checkSessionTimeout() {
+    const session = getSession();
+    if (!session) return;
+    if (Date.now() - lastActivity > SESSION_TIMEOUT_MS) {
+      clearSession();
+      showLogin();
+      const status = utils.byId("admin-status");
+      if (status) {
+        utils.setStatus(status,
+          "Your session has expired due to inactivity. Please sign in again.",
+          "error");
+      }
+      console.warn("[SECURITY] Admin session timed out after 15 minutes of inactivity.");
+    }
+  }
 
   /* ---------- Config fetch ---------- */
   async function loadConfig() {
@@ -364,6 +446,17 @@
     const btn = utils.byId("admin-login-btn");
     const status = utils.byId("admin-login-status");
 
+    // Rate limit check — block if 3 failed attempts in the current session
+    const blockRemaining = getBlockRemaining();
+    if (blockRemaining > 0) {
+      const seconds = Math.ceil(blockRemaining / 1000);
+      utils.setStatus(status,
+        "Too many failed attempts. Please wait " + seconds + " seconds before trying again.",
+        "error");
+      startBlockCountdown(status);
+      return;
+    }
+
     const email = emailEl ? emailEl.value.trim() : "";
     const password = passEl ? passEl.value : "";
 
@@ -383,6 +476,7 @@
       // (The real enforcement is the RLS policy at the DB level.)
       if (ADMIN_EMAILS.indexOf(session.email.toLowerCase()) === -1) {
         clearSession();
+        recordFailedAttempt();
         utils.setStatus(status,
           "This account is not authorised to access the admin dashboard.",
           "error");
@@ -392,6 +486,8 @@
       }
 
       saveSession(session.access, session.refresh, session.email);
+      resetRateLimit();
+      resetActivityTimer();
       utils.clearStatus(status);
       btn.disabled = false;
       btn.textContent = "Sign in";
@@ -399,11 +495,44 @@
       passEl.value = "";
       showDashboard(session.email);
     } catch (e) {
+      recordFailedAttempt();
+      const rl = getRateLimit();
       const msg = e && e.message ? e.message : "Sign-in failed.";
-      utils.setStatus(status, msg, "error");
+      if (rl.blockedUntil && Date.now() < rl.blockedUntil) {
+        const seconds = Math.ceil((rl.blockedUntil - Date.now()) / 1000);
+        utils.setStatus(status,
+          "Too many failed attempts. Blocked for " + seconds + " seconds.",
+          "error");
+        startBlockCountdown(status);
+      } else {
+        const remaining = MAX_ATTEMPTS - rl.attempts;
+        utils.setStatus(status,
+          msg + (remaining > 0 ? " " + remaining + " attempt" + (remaining === 1 ? "" : "s") + " remaining." : ""),
+          "error");
+      }
       btn.disabled = false;
       btn.textContent = "Sign in";
     }
+  }
+
+  /* ---------- Block countdown timer ---------- */
+  function startBlockCountdown(statusEl) {
+    if (blockCountdownTimer) clearInterval(blockCountdownTimer);
+    blockCountdownTimer = setInterval(function () {
+      const remaining = getBlockRemaining();
+      if (remaining <= 0) {
+        clearInterval(blockCountdownTimer);
+        blockCountdownTimer = null;
+        utils.setStatus(statusEl, "Block expired. You may try signing in again.", "info");
+        const btn = utils.byId("admin-login-btn");
+        if (btn) btn.focus();
+      } else {
+        const seconds = Math.ceil(remaining / 1000);
+        utils.setStatus(statusEl,
+          "Too many failed attempts. Please wait " + seconds + " seconds.",
+          "error");
+      }
+    }, 1000);
   }
 
   function handleLogout() {
@@ -436,19 +565,7 @@
           data.urlsPinged + " URLs submitted. Indexing is at each engine's discretion.",
           "success");
       } else {
-        // Build a useful error message showing the ACTUAL IndexNow status
-        var msg;
-        if (data && data.error) {
-          msg = data.error;
-        } else if (data && typeof data.indexnowStatus === "number") {
-          msg = "IndexNow API returned HTTP " + data.indexnowStatus + ". " +
-                "Check that the INDEXNOW_KEY env var on Cloudflare exactly matches " +
-                "the key file at /" + (data.indexnowKey || "INDEXNOW_KEY") + ".txt";
-        } else if (data && typeof data.status === "number" && data.status !== 200) {
-          msg = "IndexNow API returned HTTP " + data.status + ".";
-        } else {
-          msg = "Ping failed (HTTP " + r.status + "). Check Cloudflare env var INDEXNOW_KEY.";
-        }
+        const msg = (data && data.error) || "Ping failed (HTTP " + r.status + ").";
         utils.setStatus(status, msg, "error");
       }
     } catch (e) {
@@ -488,10 +605,31 @@
     const list = utils.byId("admin-feedback-list");
     if (list) list.addEventListener("click", handleRowAction);
 
+    // Session timeout — track user activity and auto-logout after 15 min
+    document.addEventListener("click", resetActivityTimer);
+    document.addEventListener("keydown", resetActivityTimer);
+    document.addEventListener("scroll", resetActivityTimer);
+    setInterval(checkSessionTimeout, 60 * 1000); // check every minute
+
     // Check for existing session
     const session = getSession();
     if (session) {
-      showDashboard(session.email);
+      // Verify the session is still valid by checking rate limit first
+      const blockRemaining = getBlockRemaining();
+      if (blockRemaining > 0) {
+        showLogin();
+        const status = utils.byId("admin-login-status");
+        if (status) {
+          const seconds = Math.ceil(blockRemaining / 1000);
+          utils.setStatus(status,
+            "Too many failed attempts. Please wait " + seconds + " seconds.",
+            "error");
+          startBlockCountdown(status);
+        }
+      } else {
+        resetActivityTimer();
+        showDashboard(session.email);
+      }
     } else {
       showLogin();
     }
