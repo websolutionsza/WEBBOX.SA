@@ -1,0 +1,15 @@
+# WEB BOX SA
+
+> WEB BOX SA is a free, independent browser game library. Browse a curated catalogue of browser-playable games with search and category filters. No registration, no payment.
+
+## Pages
+- [Homepage](https://webbox-sa.pages.dev/)
+- [About](https://webbox-sa.pages.dev/pages/about.html)
+- [Support & Feedback](https://webbox-sa.pages.dev/pages/support.html)
+- [Privacy Policy](https://webbox-sa.pages.dev/pages/privacy.html)
+- [Terms of Use](https://webbox-sa.pages.dev/pages/terms.html)
+
+## Notes
+- The site does not host games. It links to third-party browser-game destinations.
+- Game availability depends on third-party sources and may change without notice.
+- Some entries may be unavailable due to copyright complaints or source removal.
